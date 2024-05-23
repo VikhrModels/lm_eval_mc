@@ -1,0 +1,11 @@
+task: bookmc
+dataset_path: Vikhrmodels/movie_mc
+output_type: multiple_choice
+training_split: train
+process_docs: !function utils.process_docs
+validation_split: train
+doc_to_text: "{{question}}\nA. {{choices[0]}}\nB. {{choices[1]}}\nC. {{choices[2]}}\nD. {{choices[3]}}\nE. {{choices[4]}}\nF. {{choices[5]}}\nG. {{choices[6]}}\nH. {{choices[7]}}\nK. {{choices[8]}}\nI. {{choices[9]}}\nJ. {{choices[10]}}\nL. {{choices[11]}}\nОтвет:"
+doc_to_target: label
+doc_to_choice: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"]
+metric_list:
+  - metric: acc
