@@ -1,5 +1,5 @@
 task: lawmc
-dataset_path: Vikhrmodels/books_mc
+dataset_path: Vikhrmodels/law_mc
 output_type: multiple_choice
 training_split: train
 process_docs: !function utils.process_docs
