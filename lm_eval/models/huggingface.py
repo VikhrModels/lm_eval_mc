@@ -2,7 +2,7 @@ import copy
 import os
 from datetime import timedelta
 from pathlib import Path
-from typing import List, Literal, Optional, Tuple, Union
+from typing import Dict, List, Literal, Optional, Tuple, Union
 
 import torch
 import torch.nn.functional as F
@@ -415,6 +415,10 @@ class HFLM(TemplateLM):
     def world_size(self):
         return self._world_size
 
+    @property
+    def tokenizer_name(self) -> str:
+        return self.tokenizer.name_or_path.replace("/", "__")
+
     def _get_backend(
         self,
         config: Union[transformers.PretrainedConfig, transformers.AutoConfig],
@@ -583,7 +587,9 @@ class HFLM(TemplateLM):
             if self._model.config.vocab_size != len(self.tokenizer):
                 # resize model for LoRAs with added tokens
                 self._model.resize_token_embeddings(len(self.tokenizer))
-                eval_logger.info(f"Model config indicates vocab_size='{self._model.config.vocab_size}', but found tokenizer with vocab size '{len(self.tokenizer)}'. Resizing model embedding layer...") 
+                eval_logger.info(
+                    f"Model config indicates vocab_size='{self._model.config.vocab_size}', but found tokenizer with vocab size '{len(self.tokenizer)}'. Resizing model embedding layer..."
+                )
             self._model = PeftModel.from_pretrained(
                 self._model, peft, revision=revision
             )
@@ -1283,6 +1289,14 @@ class HFLM(TemplateLM):
         pbar.close()
 
         return res
+
+    def apply_chat_template(self, chat_history: List[Dict[str, str]]) -> str:
+        """
+        Method to apply a chat template to a list of chat history between user and model.
+        """
+        return self.tokenizer.apply_chat_template(
+            chat_history, tokenize=False, add_generation_prompt=True
+        )
 
     def get_model_info(self) -> dict:
         """
