@@ -7,7 +7,7 @@ def process_docs(dataset: Dataset):
 	def _helper(doc,index):
 		pref = 10-len(doc['options'])
 		if pref!=0:
-			add_choices = [dataset[random.randint(1,1900)]['options'][2] for i in range(1,pref)]
+			add_choices = [dataset[random.randint(1,1900)]['options'][2] for i in range(pref)]
 			doc['options'].extend(add_choices)
 		true_label = doc['options'][doc['answer_index']]
 		random.shuffle(doc['options'])
