@@ -2,6 +2,7 @@ from datasets import Dataset
 import string
 import random
 
+
 def process_docs(dataset: Dataset):
     def _helper(doc,index):
         field = doc['correct_answer']
@@ -42,18 +43,15 @@ def process_docs(dataset: Dataset):
 
         label_map = {label: i for i, label in enumerate(string.ascii_uppercase[:12])}
         inv_label_map = {i: label for i, label in enumerate(string.ascii_uppercase[:12])}
-        # print(label_map)
         correct_label = label_map.get(fi)
-        if not correct_label: return {"label":"failed row w/o answer","gold":""}
+        if not correct_label:
+            return {"label":"failed row w/o answer","gold":""}
 
         random.shuffle(doc["choices"])
-        # print(f"answer{list('ABCD')[fi]}",doc[f"answer{list('ABCD')[fi]}"])
         gold = fi
         shuffled_label = doc["choices"].index(doc[f"answer{gold}"])
         doc["label"] = inv_label_map[shuffled_label]
         doc["gold"] = inv_label_map[shuffled_label]
-        # print(doc)
-
 
         return doc
     ds = dataset.map(_helper,with_indices=True)
