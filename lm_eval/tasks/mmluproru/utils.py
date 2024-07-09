@@ -20,5 +20,7 @@ def process_docs(dataset: Dataset):
 				doc['gold']=string.ascii_uppercase[i]
 				break
 		return doc
-	return dataset.map(_helper,with_indices=True)
+	def filt(row):
+		return row['options'][row['answer_index']]!='empty'
+	return dataset.map(_helper,with_indices=True).filter(filt)
 
